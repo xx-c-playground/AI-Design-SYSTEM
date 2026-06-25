@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI-Native Design Systems — Portfolio</title>
+<style>
+/* ════════════════════════════════════════════════════════════
+   DESIGN TOKENS  —  drop your design.md values in here.
+   Re-skins the whole site; nothing else needs to change.
+   ════════════════════════════════════════════════════════════ */
+:root{
+  --ink:        #1a1a1a;
+  --ink-soft:   #4d4d4d;
+  --ink-faint:  #8a8a8a;
+  --bg:         #fafaf8;
+  --surface:    #ffffff;
+  --line:       #e6e4df;
+  --accent:     #2b2b2b;          /* swap for your brand accent */
+  --chip-bg:    #f0efea;
+  --why-bg:     #f2f4f2;          /* subtle tint for the "why AI" beat */
+  --code-bg:    #1e1e1e;
+  --code-fg:    #e8e8e8;
+
+  --maxw:       720px;
+  --s1: 4px; --s2: 8px; --s3: 12px; --s4: 20px;
+  --s5: 32px; --s6: 56px; --s7: 92px;
+
+  --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", "PingFang SC", "Hiragino Sans GB",
+          "Microsoft YaHei", sans-serif;
+  --mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, Consolas, monospace;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font);color:var(--ink);background:var(--bg);
+  line-height:1.65;-webkit-font-smoothing:antialiased}
+
+/* ── bilingual toggle ── */
+.cn{display:none}
+body.lang-cn .en{display:none}
+body.lang-cn .cn{display:initial}
+.cn-block{display:none}
+body.lang-cn .en-block{display:none}
+body.lang-cn .cn-block{display:block}
+
+.wrap{max-width:var(--maxw);margin:0 auto;padding:0 var(--s4)}
+
+/* ── sticky language switch ── */
+.langbar{position:sticky;top:0;z-index:50;
+  background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:saturate(120%) blur(8px);border-bottom:1px solid var(--line)}
+.langbar .wrap{display:flex;justify-content:flex-end;align-items:center;
+  height:48px;gap:var(--s1)}
+.langbtn{font:inherit;font-size:13px;letter-spacing:.02em;
+  border:1px solid var(--line);background:var(--surface);color:var(--ink-soft);
+  padding:5px 12px;border-radius:999px;cursor:pointer}
+.langbtn[aria-pressed="true"]{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* ── hero ── */
+.hero{padding:var(--s7) 0 var(--s6)}
+.eyebrow{font-size:13px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-faint);margin-bottom:var(--s4)}
+.hero h1{font-size:clamp(28px,5vw,42px);line-height:1.18;font-weight:680;
+  letter-spacing:-.01em;margin-bottom:var(--s5);max-width:20ch}
+.hero .sub{font-size:18px;color:var(--ink-soft);max-width:48ch}
+
+/* ── section scaffolding ── */
+section{padding:var(--s7) 0;border-top:1px solid var(--line)}
+.sec-label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--ink-faint);margin-bottom:var(--s5)}
+h2{font-size:clamp(22px,3.4vw,28px);line-height:1.3;font-weight:640;
+  letter-spacing:-.01em;margin-bottom:var(--s5)}
+h3{font-size:21px;font-weight:640;margin-bottom:var(--s2);letter-spacing:-.01em}
+p{margin-bottom:var(--s4);color:var(--ink-soft)}
+p:last-child{margin-bottom:0}
+p.lead{font-size:19px;color:var(--ink);line-height:1.6}
+strong{color:var(--ink);font-weight:640}
+
+/* ── work card ── */
+.card{background:var(--surface);border:1px solid var(--line);
+  border-radius:16px;padding:var(--s5)}
+.chip{display:inline-block;font-size:12px;letter-spacing:.02em;
+  background:var(--chip-bg);color:var(--ink-soft);
+  padding:5px 11px;border-radius:999px;margin-bottom:var(--s4)}
+.oneliner{font-size:17px;color:var(--ink);line-height:1.55;
+  margin:var(--s4) 0 var(--s5)}
+
+/* media placeholder */
+.media{margin:var(--s5) 0;border:1.5px dashed var(--line);border-radius:12px;
+  background:repeating-linear-gradient(45deg,#f4f3ef,#f4f3ef 12px,#efeee9 12px,#efeee9 24px);
+  min-height:200px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;text-align:center;color:var(--ink-faint);
+  font-size:13px;padding:var(--s4);gap:6px}
+.media .tag{font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}
+.media .hint{font-size:12px;color:var(--ink-faint);max-width:34ch}
+.media.redacted{border-color:#d8c9c0}
+.media.redacted::after{content:"● ● ● ● ●  client name redacted";
+  font-family:var(--mono);font-size:11px;letter-spacing:.05em;color:#b09a8e;
+  background:#f3ece8;padding:3px 10px;border-radius:4px;margin-top:4px}
+body.lang-cn .media.redacted::after{content:"● ● ● ● ●  客户名称已隐去"}
+
+/* when a real asset is dropped in, shed the placeholder look automatically */
+.media:has(img), .media:has(video){border:none;background:none;padding:0;min-height:0;overflow:hidden}
+.media:has(img)::after, .media:has(video)::after{content:none}
+.media img, .media video{width:100%;height:auto;display:block;border-radius:12px}
+.minimedia:has(img){border:none;background:none;padding:0;overflow:hidden}
+.minimedia img{width:100%;height:100%;object-fit:cover;border-radius:8px;display:block}
+
+/* ── staged-direction card (in-progress, visually distinct) ── */
+.card.staged{border-style:dashed;border-color:#c9c5bc;
+  background:linear-gradient(0deg,#fbfaf7,#ffffff)}
+.badge{display:inline-block;font-size:11px;letter-spacing:.08em;
+  text-transform:uppercase;color:#8a6d3b;background:#f6efe0;
+  border:1px solid #ecd9b0;border-radius:999px;padding:4px 11px;margin-bottom:var(--s3)}
+.chain{display:flex;align-items:stretch;gap:var(--s2);flex-wrap:wrap;
+  margin:var(--s5) 0;padding:var(--s4);background:#faf9f6;
+  border:1px solid var(--line);border-radius:12px}
+.chain .node{flex:1 1 120px;min-width:120px;display:flex;flex-direction:column;
+  gap:4px;padding:var(--s3);border-radius:10px;border:1px solid var(--line);
+  background:var(--surface)}
+.chain .node .step{font-family:var(--mono);font-size:11px;color:var(--ink-faint)}
+.chain .node .nlabel{font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.35}
+.chain .node .state{font-size:11.5px;color:var(--ink-faint)}
+.chain .node.done{opacity:.78}
+.chain .node.here{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.chain .node.here .state{color:var(--accent);font-weight:600}
+.chain .node.goal{border-style:dashed;border-color:#c9c5bc}
+.chain .node.goal .nlabel{color:var(--ink-soft)}
+.chain .arrow{display:flex;align-items:center;color:var(--ink-faint);font-size:16px}
+@media(max-width:560px){
+  .chain{flex-direction:column}
+  .chain .arrow{transform:rotate(90deg);justify-content:center}
+}
+.chain-note{font-size:14px;color:var(--ink-soft);line-height:1.6;
+  margin:calc(-1 * var(--s3)) 0 var(--s5);padding-left:var(--s4);
+  border-left:2px solid var(--line)}
+.chain-note b{color:var(--ink)}
+
+/* ── spaced, labeled beats (the readability fix) ── */
+.beats{margin:var(--s5) 0 0}
+.beat{margin-bottom:var(--s5)}
+.beat:last-child{margin-bottom:0}
+.beat-label{font-size:11px;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--ink-faint);margin-bottom:var(--s2);display:block}
+.beat-body{font-size:15.5px;color:var(--ink-soft);line-height:1.62}
+.beat-body strong{color:var(--ink)}
+
+/* why-AI beat — tinted so the reasoning stands apart */
+.why{background:var(--why-bg);border-radius:12px;padding:var(--s4) var(--s4);
+  margin:var(--s5) 0}
+.why .beat-label{color:#3f5d44}
+.why .beat-body{color:#33402f}
+
+/* my-take — pull quote carrying opinion + staging */
+.take{border-left:3px solid var(--accent);
+  padding:var(--s1) 0 var(--s1) var(--s4);margin:var(--s5) 0 0}
+.take .beat-label{color:var(--ink);font-weight:600}
+.take .beat-body{font-size:16.5px;color:var(--ink);line-height:1.55}
+.take .next{display:block;margin-top:var(--s2);font-size:14px;color:var(--ink-faint)}
+.take .next b{color:var(--ink-soft);font-weight:600}
+
+/* code-peek */
+details.code{margin-top:var(--s5);border:1px solid var(--line);border-radius:10px;
+  overflow:hidden;background:var(--surface)}
+details.code summary{cursor:pointer;list-style:none;padding:11px var(--s4);
+  font-size:14px;color:var(--ink-soft);font-family:var(--mono);
+  display:flex;align-items:center;gap:8px}
+details.code summary::-webkit-details-marker{display:none}
+details.code summary::before{content:"▸";transition:transform .15s}
+details.code[open] summary::before{transform:rotate(90deg)}
+details.code pre{background:var(--code-bg);color:var(--code-fg);padding:var(--s4);
+  overflow-x:auto;font-family:var(--mono);font-size:13px;line-height:1.6;
+  border-top:1px solid var(--line)}
+
+.collab{font-size:14px;color:var(--ink-faint);margin-top:var(--s5);
+  padding-top:var(--s4);border-top:1px dashed var(--line)}
+.collab b{color:var(--ink-soft)}
+
+/* ── eng-collab strip ── */
+.strip-head{font-size:15px;color:var(--ink-soft);margin-bottom:var(--s5);max-width:54ch}
+.tiles{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--s4)}
+.tile{background:var(--surface);border:1px solid var(--line);
+  border-radius:14px;padding:var(--s4)}
+.tile .src{font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--ink-faint);margin-bottom:var(--s2)}
+.tile h4{font-size:15px;font-weight:640;margin-bottom:var(--s2)}
+.tile p{font-size:13.5px;margin-bottom:var(--s3);line-height:1.55}
+.tile .minimedia{height:168px;border:1.5px dashed var(--line);border-radius:8px;
+  background:#f4f3ef;display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--ink-faint);text-align:center;padding:8px}
+@media(max-width:640px){.tiles{grid-template-columns:1fr}}
+
+/* ── POV ── */
+.pov{display:flex;flex-direction:column;gap:var(--s4)}
+.claim{background:var(--surface);border:1px solid var(--line);
+  border-radius:14px;padding:var(--s5)}
+.claim .n{font-family:var(--mono);font-size:13px;color:var(--ink-faint);margin-bottom:var(--s2)}
+.claim p{margin-bottom:0;color:var(--ink);font-size:16.5px;line-height:1.55}
+
+/* ── contact ── */
+.contact{padding-bottom:var(--s7)}
+.contact a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--ink-faint)}
+.contact a:hover{border-color:var(--ink)}
+.links{display:flex;flex-wrap:wrap;gap:var(--s5);margin-top:var(--s5);font-size:16px}
+
+footer{border-top:1px solid var(--line);padding:var(--s4) 0;
+  font-size:12px;color:var(--ink-faint)}
+</style>
+</head>
+<body class="lang-en">
+
+<!-- ════ LANGUAGE SWITCH ════ -->
+<div class="langbar">
+  <div class="wrap">
+    <button class="langbtn" data-lang="en" aria-pressed="true">EN</button>
+    <button class="langbtn" data-lang="cn" aria-pressed="false">中文</button>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <!-- ════ 0 · HERO ════ -->
+  <header class="hero">
+    <div class="eyebrow">
+      <span class="en">Product Designer · AI-Native Design Systems</span>
+      <span class="cn">产品设计师 · AI 原生设计系统</span>
+    </div>
+    <h1>
+      <span class="en">Turning the design system into an asset AI can read, consume, and generate.</span>
+      <span class="cn">我相信设计系统的下一步，是从一份「给人看的规范」，变成一份「机器能直接调用的资产」。</span>
+    </h1>
+    <p class="sub">
+      <span class="en">I build the agents, skills, and structured assets that give a design team new leverage, from inspiration to prototype to delivery.</span>
+      <span class="cn">我搭建 agent、skill 和结构化资产，给设计团队多一层杠杆，贯穿从灵感、原型到交付的全流程。</span>
+    </p>
+  </header>
+
+  <!-- ════ 1 · THESIS ════ -->
+  <section id="thesis">
+    <div class="sec-label"><span class="en">Thesis</span><span class="cn">我的判断</span></div>
+    <div class="en-block">
+      <p class="lead"><strong>AI's value in design isn't deciding how the work ships. It's clearing the mess at the input.</strong></p>
+      <p>A complete knowledge base, adaptable agents, and automated workflows are the bedrock of real design-and-engineering muscle.</p>
+      <p>So the teams AI actually empowers start from the bottom, automating the business layer around what each function needs, then progressively free up the team's judgment and output for higher-value architectural decisions. Almost all of my recent work circles this one point: automate the repetitive layer, wire agents across fragmented context, gather scattered design knowledge into a source of truth an AI can actually use, and finally extend it into cross-functional collaboration.</p>
+    </div>
+    <div class="cn-block">
+      <p class="lead"><strong>AI 在设计里的价值，不在替你决定方案最终怎么落地，而在替你把一团乱的输入理清楚。</strong></p>
+      <p>完备的知识库、灵活的 agent、自动化的工作流，是设计与开发硬实力的基石。</p>
+      <p>所以真正被 AI 赋能的团队，会针对不同职能的需求，把 AI 从业务底层的自动化做起，再一步步释放团队的判断力和生产力，去做更高价值的架构决策。我最近在做的事，基本都围着这一点：把重复的部分自动化、让 agent 在散落的上下文之间跑通、再把零碎的设计知识，收拢成一个 AI 真正用得上的信息源，最后再延伸到跨职能的协作里。</p>
+    </div>
+  </section>
+
+  <!-- ════ 2 · AUTOMATION WORKBENCH  [LEAD] ════ -->
+  <section id="workbench">
+    <div class="sec-label"><span class="en">01 · Build</span><span class="cn">01 · 构建</span></div>
+    <article class="card">
+      <span class="chip">
+        <span class="en">Independent builder · scope discipline · production automation</span>
+        <span class="cn">独立构建 · 范围判断 · 生产自动化</span>
+      </span>
+      <h3>
+        <span class="en">Automation workbench for batch production</span>
+        <span class="cn">面向批量生产的自动化工作台</span>
+      </h3>
+      <p class="oneliner">
+        <span class="en">A local pipeline for batch update, retouch, and logging, scoped down from an over-ambitious agent design into something deterministic that ships stable, quality work every cycle.</span>
+        <span class="cn">一条本地流水线，做批量更新、retouch 和日志记录。它从一个太想一步到位的 agent 方案，收敛成一套确定、可控的做法，每一轮都能稳定交付有质量的成品。</span>
+      </p>
+
+      <div class="media redacted">
+        <img src="images/workbench.png" alt="批量生产自动化工作台 — intake 表单到批处理到 QA 日志" />
+      </div>
+
+      <div class="beats">
+        <div class="beat">
+          <span class="beat-label"><span class="en">The problem</span><span class="cn">问题</span></span>
+          <p class="beat-body en">Every cycle of updating Adobe InDesign marketing templates per brand client burned <strong>10–20 hours</strong>. The kind of labor that scales linearly with volume and never gets better.</p>
+          <p class="beat-body cn">每一轮根据品牌客户更新对应的 Adobe InDesign 营销材料模版，都要烧掉 <strong>10–20 小时</strong>。这种活会随着量线性增长，而且永远不会变轻松。</p>
+        </div>
+        <div class="beat">
+          <span class="beat-label"><span class="en">What I tried first</span><span class="cn">我最先试的</span></span>
+          <p class="beat-body en">I started ambitious: Adobe MCP + an agent to handle placing brand logos and updating the color system on their own. On the <strong>unstructured legacy files</strong> it fell apart: wrong scaling, and an agent that wouldn't terminate. The autonomy was the wrong tool for messy input.</p>
+          <p class="beat-body cn">我一开始想得很大：用 Adobe MCP + agent，让它自己处理放置品牌 logo、颜色系统更新。但一碰上<strong>无结构的历史文件</strong>就崩了：缩放出错，agent 还停不下来。对杂乱的输入来说，「自治」就是用错了工具。</p>
+        </div>
+        <div class="beat">
+          <span class="beat-label"><span class="en">What I shipped instead</span><span class="cn">我最后交付的</span></span>
+          <p class="beat-body en">I tightened the scope hard: clearly <strong>labeled layers</strong>, scripts, and a workbench for batch update, retouch, and logging. <strong>The scripting is the core</strong>, deterministic, inspectable, and stable enough to deliver quality work every run, with a human-QA gate kept by design.</p>
+          <p class="beat-body cn">我把范围收得很紧：清晰<strong>分层标注</strong>、脚本，再加一个做批量更新、retouch、日志的工作台。<strong>脚本才是核心</strong>：确定、可检查，稳到每一轮都能交出有质量的活，并且刻意留着人工 QA 这道关。</p>
+        </div>
+        <div class="beat why">
+          <span class="beat-label"><span class="en">Where AI belongs, and where it doesn't</span><span class="cn">AI 该用在哪、不该用在哪</span></span>
+          <p class="beat-body en">The lesson is the asset: <strong>structure the input before you reach for autonomy.</strong> AI belongs at the structured edges; deterministic scripts own the core; an agent only earns a seat where it provably terminates. I also left <strong>RAG out on purpose</strong>: with only 30–50 brand files, retrieval adds cost and zero signal. Matching the tool to the input is the actual skill.</p>
+          <p class="beat-body cn">真正的资产是这条经验：<strong>在伸手要「自治」之前，先把输入结构化。</strong>AI 用在结构化的边缘，确定性脚本守住核心，agent 只有在「能停下来」的地方才配有一席。我也<strong>故意没上 RAG</strong>：只有 30–50 个品牌文件，检索只会徒增成本、毫无收益。让工具匹配输入，才是真正的本事。</p>
+        </div>
+        <div class="beat">
+          <span class="beat-label"><span class="en">Signal</span><span class="cn">结果</span></span>
+          <p class="beat-body en"><strong>10–20 hrs → under 1 hr</strong> per cycle, and more importantly, <em>repeatable</em>. The loop runs in production without surprises.</p>
+          <p class="beat-body cn">每轮 <strong>10–20 小时 → 1 小时以内</strong>；更重要的是，<em>可重复</em>。整条链路在生产里跑，不出意外。</p>
+        </div>
+        <div class="beat take">
+          <span class="beat-label"><span class="en">My take</span><span class="cn">我的看法</span></span>
+          <p class="beat-body en">Killing my own runaway agent taught me more than shipping it would have. The discipline (scope down until it's stable, then expand from a base you trust) is the thing I'd bring on day one.</p>
+          <p class="beat-body cn">亲手砍掉自己那个停不下来的 agent，比硬把它推上线，让我学到的更多。先收到够稳，再从一个你信得过的底座往外扩，这种纪律，是我第一天就能带进团队的。</p>
+          <span class="next en"><b>Next stage</b> a skill that fetches upstream brand assets as structured JSON, plus MCP into ClickUp for agile tracking. AI re-enters where the input is finally structured enough to trust it.</span>
+          <span class="next cn"><b>下一步</b> 做一个把上游品牌资产抓成结构化 JSON 的 skill，再用 MCP 接进 ClickUp 做敏捷管理：等输入终于结构化到可以信任，AI 再回到流程里。</span>
+        </div>
+      </div>
+
+
+      <p class="collab">
+        <span class="en"><b>My role</b> sole designer-builder, defined the architecture, wrote the scripts, kept a human-QA gate by design.</span>
+        <span class="cn"><b>我的角色</b> 独立设计 + 构建：定义架构、编写脚本，并刻意保留人工 QA 这道关卡。</span>
+      </p>
+    </article>
+  </section>
+
+  <!-- ════ 3 · CROSS-CONTEXT AGENT ════ -->
+  <section id="agent">
+    <div class="sec-label"><span class="en">02 · Agents in the workflow</span><span class="cn">02 · 工作流里的 Agent</span></div>
+    <article class="card">
+      <span class="chip">
+        <span class="en">Agent architecture · multi-source integration · guardrail design</span>
+        <span class="cn">Agent 架构 · 多源整合 · 护栏设计</span>
+      </span>
+      <h3>
+        <span class="en">Cross-context agent: Figma + Slack → knowledge vault</span>
+        <span class="cn">跨上下文 Agent：Figma + Slack → 知识库</span>
+      </h3>
+      <p class="oneliner">
+        <span class="en">An agent that reads across Figma and Slack and writes a structured entry into the vault, and, harder, the write-rules and guardrails that decide what it's allowed to write. I'm validating both on my own vault first.</span>
+        <span class="cn">一个 agent，能横跨 Figma 和 Slack 读取，再把结构化条目写进知识库。更难的部分，是那套决定它「能写什么」的写入规则和护栏，这两样我都先在自己的知识库上验证。</span>
+      </p>
+
+      <div class="media">
+        <img src="images/agent.png" alt="跨上下文 agent — 从 Figma 和 Slack 抓取并写入知识库" />
+      </div>
+
+      <div class="beats">
+        <div class="beat">
+          <span class="beat-label"><span class="en">The problem</span><span class="cn">问题</span></span>
+          <p class="beat-body en">Design decisions and references were trapped in two incompatible places: visual frames in Figma and conversations in Slack, and nobody had time to reconcile them by hand.</p>
+          <p class="beat-body cn">设计决策和引用，被困在两个互不兼容的地方：Figma 里的画板，和 Slack 里的对话。没人有空去手动把它们对齐。</p>
+        </div>
+        <div class="beat">
+          <span class="beat-label"><span class="en">What I built</span><span class="cn">我做了什么</span></span>
+          <p class="beat-body en">An agent that pulls context from two <strong>constantly-changing</strong> sources and cross-checks each update against its background, so the record stays accurate. Gated by a set of <strong>write-rules and guardrails</strong> (what it may write, whom it may overwrite, when it must defer to a human), it then writes updates back systematically, so every project iteration gets logged on time. I get it working on my <strong>personal</strong> vault first, ironing out the failure modes on my own corpus before extending it to the team's collective knowledge base.</p>
+          <p class="beat-body cn">一个 agent：从两个<strong>动态变化</strong>的工具里抓上下文，把每条更新和它的背景做交叉验证，确保记录准确。再配一套<strong>写入规则和护栏</strong>，约束它能写什么、能覆盖谁、什么时候必须交回给人；最后系统性地把更新写回知识库，确保项目的每一次迭代都被及时记录下来。我先在<strong>自己的</strong>个人知识库上把流程跑通、把问题趟平，再延伸到团队的集体知识库。</p>
+        </div>
+        <div class="beat why">
+          <span class="beat-label"><span class="en">Why AI fits here</span><span class="cn">为什么这里适合用 AI</span></span>
+          <p class="beat-body en">The context lives in <strong>different formats with the same meaning</strong>: a pixel frame and a sentence can point at the same decision. A deterministic integration can move data between tools, but it can't reconcile <em>semantics</em>. That reconciliation is exactly what an agent is for.</p>
+          <p class="beat-body cn">同一个意思，常常被装在<strong>不同的格式里</strong>：一块画板和一句话，可能指向同一个决策。普通的集成能在工具间搬数据，却没法对齐<em>语义</em>。而对齐语义，正是 agent 该干的事。</p>
+        </div>
+        <div class="beat">
+          <span class="beat-label"><span class="en">Signal</span><span class="cn">结果</span></span>
+          <p class="beat-body en">Context capture moves from manual copy-paste to a single automated write path, one source, one format.</p>
+          <p class="beat-body cn">上下文沉淀，从手动复制粘贴，变成一条自动写入的路径：一个来源，一种格式。</p>
+        </div>
+        <div class="beat take">
+          <span class="beat-label"><span class="en">My take</span><span class="cn">我的看法</span></span>
+          <p class="beat-body en">The hard part of an agent isn't reading. It's deciding what it's allowed to write. I'm proving the guardrails on my own vault before they ever touch anyone else's knowledge.</p>
+          <p class="beat-body cn">一个 agent 难的不是读，而是判断它「能写什么」。在碰到别人的知识之前，我先在自己的知识库上，把护栏跑明白。</p>
+          <span class="next en"><b>Next stage</b> write-back trustworthy enough to run without a manual review pass.</span>
+        </div>
+      </div>
+
+
+      <p class="collab">
+        <span class="en"><b>My role</b> designed the agent's read/write contract, the vault schema, and the guardrails that gate every write.</span>
+        <span class="cn"><b>我的角色</b> 设计了 agent 的读写契约、知识库 schema，以及把关每一次写入的护栏。</span>
+      </p>
+    </article>
+  </section>
+
+  <!-- ════ 4 · STAGED DIRECTION (vault → team SoT) ════ -->
+  <section id="vault">
+    <div class="sec-label"><span class="en">03 · Staged direction</span><span class="cn">03 · 分阶段方向</span></div>
+    <article class="card staged">
+      <span class="badge">
+        <span class="en">In progress · honest scope</span>
+        <span class="cn">进行中 · 如实标注</span>
+      </span>
+      <span class="chip">
+        <span class="en">Knowledge vault · second brain · dynamic management</span>
+        <span class="cn">知识库 · 第二大脑 · 动态管理</span>
+      </span>
+      <h3>
+        <span class="en">From personal vault to team source of truth</span>
+        <span class="cn">从个人知识库，到团队信息源</span>
+      </h3>
+      <p class="oneliner">
+        <span class="en">The end state I'm aiming for: the whole team, and everyone's agents, reading the design system from one place, grounded in fact so the AI hallucinates less. For now I'm still getting the flow to run end to end, clearing the automation bottlenecks each role actually hits. What I can show you is how I'd sequence it, and where I honestly am right now.</span>
+        <span class="cn">这是我最终希望抵达的状态：让整个团队，连同所有人的 agent，都从同一个地方读取设计系统，以事实为依据、减少幻觉。目前我还在探索把流程跑通，针对团队里不同职责的需求，逐个解决流程自动化的卡点；我想展示的，是我会怎么排这个顺序，以及现在真实走到了哪一步。</span>
+      </p>
+
+      <div class="media">
+        <img src="images/vault-obsidian.png" alt="Obsidian 知识库 — 个人 second brain 结构截图" />
+      </div>
+
+      <!-- dependency chain -->
+      <div class="chain">
+        <div class="node done">
+          <span class="step">01</span>
+          <span class="nlabel"><span class="en">design.md foundation</span><span class="cn">design.md 打底</span></span>
+          <span class="state"><span class="en">prerequisite</span><span class="cn">前置条件</span></span>
+        </div>
+        <div class="arrow">→</div>
+        <div class="node done">
+          <span class="step">02</span>
+          <span class="nlabel"><span class="en">vault schema</span><span class="cn">知识库 schema</span></span>
+          <span class="state"><span class="en">defined</span><span class="cn">已定义</span></span>
+        </div>
+        <div class="arrow">→</div>
+        <div class="node here">
+          <span class="step">03</span>
+          <span class="nlabel"><span class="en">agent write-rules + guardrails</span><span class="cn">agent 写入规则 + 护栏</span></span>
+          <span class="state"><span class="en">← current spot · write-tests on my own vault</span><span class="cn">← 当前位置，基于自己的库做写入测试</span></span>
+        </div>
+        <div class="arrow">→</div>
+        <div class="node goal">
+          <span class="step">04</span>
+          <span class="nlabel"><span class="en">team source of truth</span><span class="cn">团队信息源</span></span>
+          <span class="state"><span class="en">next direction</span><span class="cn">下一步的方向</span></span>
+        </div>
+      </div>
+
+      <!-- forward concern under the chain -->
+      <p class="chain-note">
+        <span class="en"><b>The next problem:</b> keeping the source of truth from cross-contaminating: vault isolation and live, dynamic upkeep once several people are writing into it.</span>
+        <span class="cn"><b>下一步要解决的：</b>如何保证信息源不被交叉污染，在多人协作中完成知识库的隔离与动态维护。</span>
+      </p>
+
+      <div class="beats">
+        <div class="beat">
+          <span class="beat-label"><span class="en">Why it's staged, not shipped</span><span class="cn">为什么是分阶段，而不是已交付</span></span>
+          <p class="beat-body en">A team source of truth is only as good as the spec under it. It can't exist before a solid <strong>design.md</strong> foundation, so this is a sequenced rollout, deliberately gated, still being explored.</p>
+          <p class="beat-body cn">团队信息源的上限，取决于它底下那份规范。在一份够扎实的 <strong>design.md</strong> 之前，它根本立不起来。所以这是一个有先后、刻意设卡、还在探索的推进。</p>
+        </div>
+        <div class="beat">
+          <span class="beat-label"><span class="en">Where I actually am</span><span class="cn">我现在真实的位置</span></span>
+          <p class="beat-body en">Testing the path on my <strong>personal</strong> knowledge vault (see 02): proving the agent's write-rules and guardrails hold before any of it touches shared team knowledge.</p>
+          <p class="beat-body cn">在我<strong>自己</strong>的知识库上跑通路径（见 02）：先证明 agent 的写入规则和护栏立得住，再让它碰团队的共享知识。</p>
+        </div>
+        <div class="beat why">
+          <span class="beat-label"><span class="en">Why AI fits the destination</span><span class="cn">为什么终点适合 AI</span></span>
+          <p class="beat-body en">A source of truth earns its cost only when something <strong>reads it at scale</strong>, and that reader is an agent. Structure is the whole point: readable by agents, maintainable by people. That's exactly why the spec and the guardrails have to come first.</p>
+          <p class="beat-body cn">一个信息源值不值它的成本，取决于有没有东西能<strong>大规模地读它</strong>，而那个读者就是 agent。结构本身就是关键：让 agent 读得懂，也让人维护得动。这也正是规范和护栏必须先行的原因。</p>
+        </div>
+        <div class="beat take">
+          <span class="beat-label"><span class="en">My take</span><span class="cn">我的看法</span></span>
+          <p class="beat-body en">I'd rather show you a staged bet I can defend than a finished system I can't. Knowing what blocks what, and refusing to skip it, is the judgment this role is actually testing for.</p>
+          <p class="beat-body cn">比起一个我撑不住的「成品」，我更愿意给你一个我站得住的「分阶段押注」。清楚什么卡着什么，并且拒绝跳步，这恰恰是这个岗位真正在考的判断力。</p>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <!-- ════ 5 · DESIGN.MD + TOKEN INSPECT ════ -->
+  <section id="tokens">
+    <div class="sec-label"><span class="en">04 · Structure in production</span><span class="cn">04 · 生产环境里的结构</span></div>
+    <article class="card">
+      <span class="chip">
+        <span class="en">Design systems · token spec · eng collaboration</span>
+        <span class="cn">设计系统 · token 规范 · 工程协作</span>
+      </span>
+      <h3>
+        <span class="en">design.md + a token-inspect skill in production</span>
+        <span class="cn">基于现有产品的 design.md + 生产环境 token 审查 skill</span>
+      </h3>
+      <p class="oneliner">
+        <span class="en">A design.md derived from a live product, plus a skill that inspects design tokens in the production environment, keeping the system extensible and legible at once.</span>
+        <span class="cn">一份从线上产品反推出来的 design.md，加一个在生产环境里审查 token 的 skill，让系统同时做到「可扩展」和「读得懂」。</span>
+      </p>
+
+      <div class="media redacted">
+        <img src="images/token-inspect.png" alt="token 审查 — inspect 工具对照 design.md 读取线上 token" />
+      </div>
+
+      <div class="beats">
+        <div class="beat">
+          <span class="beat-label"><span class="en">The problem</span><span class="cn">问题</span></span>
+          <p class="beat-body en">In an agile environment heavy with tech debt, where project history survives by word of mouth, and design intent and what actually ships drift apart over time, and a gap opens between what individuals know and what the team understands. Long term, a system no one can verify means the effort just gets spent on archaeology.</p>
+          <p class="beat-body cn">在一个技术债严重、项目历史背景靠「口口相传」的敏捷开发环境里，设计意图和实际上线之间长期存在漂移，个人知识和团队认知之间也出现断层。长期来看，一个无法被校验的系统，会让效率都耗在「考古」上。</p>
+        </div>
+        <div class="beat">
+          <span class="beat-label"><span class="en">What I built</span><span class="cn">我做了什么</span></span>
+          <p class="beat-body en">A structured design.md spec as the source of truth, plus a skill that reads production tokens against it and surfaces where they've diverged.</p>
+          <p class="beat-body cn">一份结构化的 design.md 作为信息源，再加一个 skill：把生产环境的 token 拿来跟它对照，把对不上的地方挑出来。</p>
+        </div>
+        <div class="beat why">
+          <span class="beat-label"><span class="en">Why I started with design.md</span><span class="cn">为什么从 design.md 下手</span></span>
+          <p class="beat-body en">In a change-averse environment, I re-mapped the team's workflow and realized the real drag on efficiency was two gaps: no high-quality context manual, and no time or resources to pay down tech debt. Organizing design.md is how I project the future I can see onto the team's throughput, turning every <strong>raw variable into a machine-reasonable spec</strong>, and judging which drift is <em>meaningful</em> versus just noise. By the next brand-wide system upgrade, that's how we drastically cut the manual upkeep of design tokens.</p>
+          <p class="beat-body cn">在一个墨守成规的环境里，我重新梳理了团队的工作流，意识到真正拖慢效率的，是两道缺口：我们缺一份高质量的上下文手册，也缺清理技术债的时间和资源。通过整理 design.md，我能把自己看见的那个未来，落到团队提效上：把每个 <strong>raw variable 变成机器可推理的规范</strong>，判断哪些是<em>有意义的</em>漂移、哪些只是噪声。等到下一次品牌系统性升级，我们就能极大减少人工维护设计 token 的负担。</p>
+        </div>
+        <div class="beat">
+          <span class="beat-label"><span class="en">Signal</span><span class="cn">结果</span></span>
+          <p class="beat-body en">Design intent and shipped tokens become checkable, not assumed, and the spec stops being a PDF nobody reads.</p>
+          <p class="beat-body cn">设计意图和上线 token 变得可校验，而不再靠假设；那份规范，也不再是一份没人看的 PDF。</p>
+        </div>
+        <div class="beat take">
+          <span class="beat-label"><span class="en">My take</span><span class="cn">我的看法</span></span>
+          <p class="beat-body en">Design systems rot silently. I'd rather make drift visible and boring than discover it the night before a launch.</p>
+          <p class="beat-body cn">设计系统是悄无声息地烂掉的。比起在发布前一晚才发现漂移，我更愿意让它变得看得见、也无聊。</p>
+          <span class="next en"><b>Next stage</b> run it in CI on every change, not on demand.</span>
+          <span class="next cn"><b>下一步</b> 把它放进 CI，每次改动都跑，而不是想起来才跑。</span>
+        </div>
+      </div>
+
+
+      <p class="collab">
+        <span class="en"><b>My role</b> authored the spec and the inspect skill. This is where design standards meet real engineering output.</span>
+        <span class="cn"><b>我的角色</b> 编写规范与审查 skill：这正是设计标准与真实工程产出相遇的地方。</span>
+      </p>
+    </article>
+  </section>
+
+  <!-- ════ 6 · ENG-COLLAB STRIP ════ -->
+  <section id="eng">
+    <div class="sec-label"><span class="en">05 · In the codebase, not over the wall</span><span class="cn">05 · 在代码库里，而不是隔墙交付</span></div>
+    <h2><span class="en">How I work with engineering</span><span class="cn">我怎么和工程协作</span></h2>
+    <p class="strip-head">
+      <span class="en">PR review where access allows; spec fidelity, including edge and empty states, responsiveness, and real-environment pressure testing in every build.</span>
+      <span class="cn">权限允许的地方就做 PR review；每个版本都做还原度（含边界与空状态）、响应式，以及真实环境下的压力测试。</span>
+    </p>
+    <div class="tiles">
+      <div class="tile">
+        <div class="src"><span class="en">Commvault · internship</span><span class="cn">Commvault · 实习</span></div>
+        <h4><span class="en">PR / code review</span><span class="cn">PR / 代码评审</span></h4>
+        <p><span class="en">Reviewed and merged others' PRs, reading and judging code, not just writing it.</span><span class="cn">评审并合并别人的 PR：读懂、判断代码，而不只是写。</span></p>
+        <div class="minimedia"><img src="images/eng-pr.png" alt="PR 讨论串 / 代码评审" /></div>
+        <p style="font-size:11px;color:var(--ink-faint);margin-top:var(--s2);margin-bottom:0;line-height:1.5">
+          <span class="en">Screenshot is from a personal project — internal PRs cannot be shared due to compliance.</span>
+          <span class="cn">截图来自个人项目，内部 PR 因合规要求无法对外展示。</span>
+        </p>
+      </div>
+      <div class="tile">
+        <div class="src"><span class="en">On Beat Digital</span><span class="cn">On Beat Digital</span></div>
+        <h4><span class="en">UI restoration + edge / empty states</span><span class="cn">UI 还原 + 边界 / 空状态</span></h4>
+        <p><span class="en">Figma annotation against the deployed build, pixel-level to spec, and flagging the edge cases and empty states devs tend to skip.</span><span class="cn">用 Figma 对照已部署的版本做标注：像素级贴合规范，同时把开发常漏掉的边界情况和空状态都标出来。</span></p>
+        <div class="minimedia"><img src="images/eng-ui.png" alt="标注：边界与空状态" /></div>
+      </div>
+      <div class="tile">
+        <div class="src"><span class="en">On Beat Digital</span><span class="cn">On Beat Digital</span></div>
+        <h4><span class="en">Responsiveness + feature check</span><span class="cn">响应式 + 功能校验</span></h4>
+        <p><span class="en">Browser inspect tool to verify features and breakpoints in the real environment.</span><span class="cn">用浏览器 inspect 工具，在真实环境里校验功能和断点。</span></p>
+        <div class="minimedia"><img src="images/eng-responsive.png" alt="inspect 工具：线上断点" /></div>
+      </div>
+      <div class="tile">
+        <div class="src"><span class="en">On Beat Digital</span><span class="cn">On Beat Digital</span></div>
+        <h4><span class="en">Pressure test + data boundaries</span><span class="cn">压力测试 + 数据边界</span></h4>
+        <p><span class="en">In the real environment I pressure-test the flows and confirm each data endpoint holds at its boundaries.</span><span class="cn">在真实环境里给流程做压力测试，并确认每个数据接口在边界条件下都扛得住。</span></p>
+        <div class="minimedia"><img src="images/eng-pressure.png" alt="压力测试 / 边界用例" /></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ 7 · POV ════ -->
+  <section id="pov">
+    <div class="sec-label"><span class="en">06 · Point of view</span><span class="cn">06 · 观点</span></div>
+    <h2><span class="en">How I think about AI in design</span><span class="cn">我怎么看设计里的 AI</span></h2>
+    <div class="pov">
+      <div class="claim">
+        <div class="n">01</div>
+        <p><span class="en">AI is strongest at <strong>structuring unstructured input</strong>, not at making the final aesthetic call. I aim it at the first and keep the second.</span><span class="cn">AI 最强的地方，是<strong>把无结构的输入理出结构</strong>，而不是做最后那个审美判断。前者我交给它，后者我留给自己。</span></p>
+      </div>
+      <div class="claim">
+        <div class="n">02</div>
+        <p><span class="en">A design system's real moat is being <strong>legible to agents</strong>. Structured, standardized assets aren't bureaucracy. They're what makes AI workflows possible.</span><span class="cn">设计系统真正的护城河，是<strong>能被 agent 读懂</strong>。结构化、规范化的资产不是繁文缛节，而是 AI 工作流能成立的前提。</span></p>
+      </div>
+      <div class="claim">
+        <div class="n">03</div>
+        <p><span class="en">The scarce skill is <strong>selection</strong>: in a flood of AI output, knowing what to keep, raise, or throw away. Taste is the bottleneck, and I treat it as the job.</span><span class="cn">稀缺的能力是<strong>取舍</strong>：在一堆 AI 产出里，分得清哪些留、哪些提、哪些扔。审美才是瓶颈，而我把它当成本职。</span></p>
+      </div>
+      <div class="claim">
+        <div class="n">04</div>
+        <p><span class="en">I'd rather ship an honest, scoped tool than over-plan a perfect one. Most of this started as an internal optimization test and earned its way forward.</span><span class="cn">比起把一个完美的工具反复规划，我更愿意先交付一个范围克制、真能用的版本。这些东西大多始于一次内部优化测试，靠实效一步步走到今天。</span></p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ════ 8 · CONTACT ════ -->
+  <section id="contact" class="contact">
+    <div class="sec-label"><span class="en">Contact</span><span class="cn">联系</span></div>
+    <h2><span class="en">Let's talk about what your team could automate first.</span><span class="cn">如何让 AI 为团队套取复利，也许我能帮您。</span></h2>
+    <div class="links">
+      <a href="mailto:cxxjobs@gmail.com">Email</a>
+      <a href="https://xianxian-cheng.com/"><span class="en">Full portfolio →</span><span class="cn">完整作品集 →</span></a>
+      <a href="https://www.linkedin.com/in/chris-cheng-92825a173/">LinkedIn</a>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    <span class="en">Built as a focused fit-argument for an AI-native design systems role. Client names redacted throughout.</span>
+    <span class="cn">本站是为某 AI 原生设计系统岗位定向制作的能力论证。客户名称全程隐去。</span>
+  </div>
+</footer>
+
+<script>
+  const btns = document.querySelectorAll('.langbtn');
+  function setLang(lang){
+    document.body.classList.toggle('lang-cn', lang === 'cn');
+    document.documentElement.lang = (lang === 'cn') ? 'zh' : 'en';
+    btns.forEach(b => b.setAttribute('aria-pressed', b.dataset.lang === lang));
+  }
+  btns.forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+</script>
+
+</body>
+</html>
